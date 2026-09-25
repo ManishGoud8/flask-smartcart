@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SmartCart</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ SmartCart Admin Control Center | Real-time Inventory & Product Management</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/admin-dashboard" class="brand-emblem">
+                    <div class="brand-icon">AD</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Admin Suite</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/admin/add-item" class="nav-link">+ Add Product</a></li>
+                        <li><a href="/admin/item-list" class="nav-link">Product Catalog</a></li>
+                        <li><a href="/admin/profile" class="nav-link">Profile</a></li>
+                        <li><a href="/user/products" class="nav-link" target="_blank">Storefront ↗</a></li>
+                        <li><a href="/admin-logout" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Greeting Masthead (AJIO Admin Style) -->
+            <div class="vintage-card vintage-card-accent" style="margin-bottom: 2rem; background: linear-gradient(135deg, #FFFFFF 0%, #FDF8ED 100%); border-top: 4px solid var(--accent-gold);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <span class="badge badge-gold" style="margin-bottom: 0.5rem;">Executive Administrator</span>
+                        <h1 style="margin-bottom: 0.35rem; color: var(--accent-primary);">Admin Dashboard (Day 3)</h1>
+                        <p style="margin-bottom: 0; font-size: 1.05rem; color: var(--ink-secondary);">
+                            Welcome, <strong>{{ session.get('admin_name') }}</strong> ({{ session.get('admin_email') }})
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="/admin/add-item" class="btn btn-primary">+ Add New Product</a>
+                        <a href="/admin-logout" class="btn btn-secondary btn-sm">Logout</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Stat Metric Tiles -->
+            <div class="stat-grid">
+                <div class="stat-tile">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-info">
+                        <h3>Catalog Control</h3>
+                        <div class="stat-value">Manage Items</div>
+                    </div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-icon">🏷️</div>
+                    <div class="stat-info">
+                        <h3>Stock Ingestion</h3>
+                        <div class="stat-value">Image Uploads</div>
+                    </div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-icon">🛡️</div>
+                    <div class="stat-info">
+                        <h3>Security</h3>
+                        <div class="stat-value">OTP Verified</div>
+                    </div>
+                </div>
+                <div class="stat-tile">
+                    <div class="stat-icon">👤</div>
+                    <div class="stat-info">
+                        <h3>Admin Profile</h3>
+                        <div class="stat-value">Active Session</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Grid -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.25rem;">Admin Operations & Quick Tools</h2>
+            <div class="action-grid" style="margin-bottom: 2.75rem;">
+                <a href="/admin/add-item" class="action-card">
+                    <div class="action-card-title">
+                        <span>➕</span> Add New Product
+                    </div>
+                    <p class="action-card-desc">
+                        Register a new product with high-resolution image upload, inventory category, and retail price.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--accent-primary);">Add Product Form →</span>
+                </a>
+
+                <a href="/admin/item-list" class="action-card">
+                    <div class="action-card-title">
+                        <span>📋</span> Manage Products Catalog
+                    </div>
+                    <p class="action-card-desc">
+                        Search and filter inventory records, inspect items, edit descriptions, update prices, or delete listings.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--accent-primary);">Open Inventory →</span>
+                </a>
+
+                <a href="/admin/profile" class="action-card">
+                    <div class="action-card-title">
+                        <span>⚙️</span> Admin Profile & Settings
+                    </div>
+                    <p class="action-card-desc">
+                        Update administrator credentials, change login password, or upload an administrative avatar.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--accent-primary);">Edit Profile →</span>
+                </a>
+
+                <a href="/user/products" class="action-card" target="_blank">
+                    <div class="action-card-title">
+                        <span>🛍️</span> View Live Storefront
+                    </div>
+                    <p class="action-card-desc">
+                        Preview the live customer shopping experience, test product listings, and test cart checkouts.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--accent-primary);">Open Storefront ↗</span>
+                </a>
+
+                <a href="/admin-logout" class="action-card">
+                    <div class="action-card-title">
+                        <span>🚪</span> Log Out
+                    </div>
+                    <p class="action-card-desc">
+                        Safely terminate the current administrative session and return to the main entry gateway.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--ink-secondary);">Exit Admin Suite →</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Admin Suite</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #94A3B8;">Administrative Console & Inventory Management.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/admin/item-list">Manage Products</a>
+                    <a href="/admin/profile">Profile Settings</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

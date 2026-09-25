@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} - SmartCart Store</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ <strong>Great Indian Festival Sale</strong> is Live! Up to 60% OFF on Top Tech & Fashion | Free Express Delivery</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="brand-emblem">
+                    <div class="brand-icon">SC</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Product Details</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/user/products" class="nav-link">← Store Catalog</a></li>
+
+                        {% if session.get('user_id') %}
+                            <!-- Amazon-Style User Account Dropdown -->
+                            <li class="user-account-menu">
+                                <a href="/user/profile" class="user-profile-pill">
+                                    {% if session.get('user_profile_image') %}
+                                        <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img">
+                                    {% else %}
+                                        <span class="user-avatar-monogram">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                    {% endif %}
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, {{ session.get('user_name', 'Account').split()[0] }}</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                                <div class="user-dropdown-card">
+                                    <div class="user-dropdown-header">
+                                        <div class="dropdown-avatar-wrap">
+                                            {% if session.get('user_profile_image') %}
+                                                <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img lg">
+                                            {% else %}
+                                                <span class="user-avatar-monogram lg">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ session.get('user_name') }}</strong>
+                                            <div style="font-size: 0.8rem; color: var(--ink-muted); word-break: break-all;">{{ session.get('user_email') }}</div>
+                                        </div>
+                                    </div>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user/profile" class="dropdown-item">👤 Edit Profile & Photo</a>
+                                    <a href="/user/my-orders" class="dropdown-item">📦 Your Orders & Invoices</a>
+                                    <a href="/user-dashboard" class="dropdown-item">📊 Customer Dashboard</a>
+                                    <a href="/user/cart" class="dropdown-item">🛒 Shopping Cart</a>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user-logout" class="dropdown-item logout">🚪 Sign Out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="user-account-menu">
+                                <a href="/user-login" class="user-profile-pill">
+                                    <div class="user-avatar-monogram">👤</div>
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, Sign In</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                                <div class="user-dropdown-card">
+                                    <a href="/user-login" class="btn btn-primary btn-block" style="margin-bottom: 0.5rem;">Sign In</a>
+                                    <div style="text-align: center; font-size: 0.82rem; color: var(--ink-secondary);">
+                                        New customer? <a href="/user-register" style="color: var(--amazon-prime-blue); font-weight: 700;">Start here</a>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                        <li>
+                            <a href="/user/cart" class="nav-cart-btn">
+                                <span>🛒 Cart</span>
+                                <span id="cart-count" class="cart-counter-pill">{{ session.get('cart')|length if session.get('cart') else 0 }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <div class="amazon-breadcrumb">
+                <a href="/">Home</a> <span>›</span> 
+                <a href="/user/products">Catalog</a> <span>›</span> 
+                <a href="/user/products?category={{ product.category }}">{{ product.category }}</a> <span>›</span> 
+                <span>{{ product.name }}</span>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Live In-Cart Banner -->
+            {% if cart_item %}
+            <div class="vintage-card" style="background: #eef7f8; border-left: 5px solid var(--amazon-prime-blue); margin-bottom: 1.5rem; padding: 1rem 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <strong style="color: var(--amazon-prime-blue); font-size: 1rem;">🛒 Currently in your Shopping Bag</strong>
+                        <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--ink-secondary);">
+                            Quantity in cart: <strong>{{ cart_item.quantity }} item(s)</strong> | Item Subtotal: <strong>₹{{ "%.2f"|format(cart_item.price * cart_item.quantity) }}</strong>
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <a href="/user/cart/increase/{{ product.product_id }}" class="btn btn-secondary btn-sm">+1 More</a>
+                        <a href="/user/cart/decrease/{{ product.product_id }}" class="btn btn-secondary btn-sm">-1 Less</a>
+                        <a href="/user/cart" class="btn btn-primary btn-sm">Proceed to Checkout →</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Product Details Two-Column Grid -->
+            <div style="display: grid; grid-template-columns: minmax(320px, 460px) 1fr; gap: 2.5rem; align-items: start;">
+                <!-- Product Image Box -->
+                <div class="vintage-card" style="padding: 1.5rem; text-align: center; position: sticky; top: 5rem;">
+                    <div style="width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; background: #ffffff; overflow: hidden; border-radius: var(--radius-md);">
+                        {% if product.image %}
+                            <img src="/static/uploads/products/{{ product.image }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.src='/static/uploads/products/asus_laptop.jpg';">
+                        {% else %}
+                            <div class="no-image-placeholder">
+                                <span style="font-size: 3.5rem;">🛍️</span>
+                                <p style="margin-top: 0.5rem;">SmartCart Verified Product</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 0.75rem;">
+                        <span class="badge badge-gold">✓ 100% Authentic</span>
+                        <span class="badge badge-success">✓ In Stock & Ready to Ship</span>
+                        <span class="badge badge-navy">⚡ Express Delivery</span>
+                    </div>
+                </div>
+
+                <!-- Product Information & Buy Box -->
+                <div>
+                    <span class="badge badge-gold" style="margin-bottom: 0.5rem;">{{ product.category }}</span>
+                    <h1 style="font-size: 2.1rem; color: var(--ink-primary); margin-bottom: 0.4rem; line-height: 1.25;">
+                        {{ product.name }}
+                    </h1>
+
+                    <!-- Star Ratings -->
+                    <div class="product-rating-row" style="margin-bottom: 1rem;">
+                        <span class="star-rating-icons" style="font-size: 1.1rem;">★★★★★</span>
+                        <span style="font-weight: 700; font-size: 0.95rem; color: #b12704;">4.8 out of 5</span>
+                        <span class="rating-count" style="font-size: 0.9rem;">(1,842 customer ratings) | 50+ bought in past month</span>
+                    </div>
+
+                    <hr style="margin: 0.75rem 0 1.25rem;">
+
+                    <!-- Pricing Box with Deals -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <div class="product-deal-badge-row">
+                            <span class="badge-limited-deal">Limited time deal</span>
+                            <span class="discount-percentage">-25% OFF</span>
+                        </div>
+                        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+                            <span style="font-size: 2.3rem; font-weight: 800; color: var(--ink-primary); font-family: var(--font-brand);">
+                                ₹{{ "%.2f"|format(product.price) }}
+                            </span>
+                            <span class="product-mrp-strike" style="font-size: 1.05rem;">
+                                M.R.P.: ₹{{ "%.2f"|format(product.price|float * 1.33) }}
+                            </span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--ink-secondary); margin-bottom: 0;">
+                            Inclusive of all taxes. EMI starts at ₹{{ "%.0f"|format(product.price|float / 6) }}/month.
+                        </p>
+                    </div>
+
+                    <!-- Amazon Special Offers Box -->
+                    <div class="amazon-offers-box">
+                        <div class="amazon-offers-title">
+                            <span>🏷️</span> Special Offers & Promotions (4 Offers Available)
+                        </div>
+                        <div class="offers-tiles-grid">
+                            <div class="offer-tile">
+                                <div class="offer-tile-title">🏦 Bank Offer</div>
+                                <p class="offer-tile-desc">Instant 10% discount up to ₹1,500 on HDFC & ICICI Credit Cards.</p>
+                            </div>
+                            <div class="offer-tile">
+                                <div class="offer-tile-title">💳 No Cost EMI</div>
+                                <p class="offer-tile-desc">Avail No Cost EMI on select cards on orders above ₹3,000.</p>
+                            </div>
+                            <div class="offer-tile">
+                                <div class="offer-tile-title">🏷️ Coupon Discount</div>
+                                <p class="offer-tile-desc">Use code <strong>FESTIVE30</strong> at checkout for additional ₹200 off.</p>
+                            </div>
+                            <div class="offer-tile">
+                                <div class="offer-tile-title">⚡ Prime Delivery</div>
+                                <p class="offer-tile-desc">Free Same-Day & Next-Day delivery for Prime members.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description Card -->
+                    <div class="vintage-card" style="padding: 1.25rem; margin-bottom: 1.5rem; background: var(--bg-surface-alt);">
+                        <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;">About this item</h3>
+                        <p style="color: var(--ink-primary); line-height: 1.6; white-space: pre-line; margin-bottom: 0;">
+                            {{ product.description }}
+                        </p>
+                    </div>
+
+                    <!-- Order Action Box -->
+                    <div class="vintage-card vintage-card-accent" style="padding: 1.5rem;">
+                        <h3 style="font-size: 1.15rem; margin-bottom: 0.85rem; color: var(--ink-primary);">
+                            Select Quantity & Place Order
+                        </h3>
+                        <form method="POST" action="/user/add-to-cart/{{ product.product_id }}">
+                            <div class="form-group" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                                <label for="quantity" class="form-label" style="margin-bottom: 0; font-weight: 700;">Quantity:</label>
+                                <select id="quantity" name="quantity" style="width: 100px; font-weight: 700;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <span style="color: var(--status-success); font-weight: 700; font-size: 0.88rem;">✓ In Stock</span>
+                            </div>
+                            <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+                                <button type="submit" class="btn btn-primary btn-lg" style="flex: 1; min-width: 160px;">
+                                    🛒 Add to Cart
+                                </button>
+                                <button type="button" class="btn btn-accent btn-lg" style="flex: 1; min-width: 160px;" onclick="addToCartAjax({{ product.product_id }})">
+                                    ⚡ Buy Now / Instant Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Store</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #d5d9d9;">Online Shopping with Fast Delivery & Razorpay / UPI Security.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/user/products" style="color: #ffffff;">Store Catalog</a>
+                    <a href="/user/cart" style="color: #ffffff;">View Cart</a>
+                    <a href="/user/my-orders" style="color: #ffffff;">Your Orders</a>
+                    <a href="/user/profile" style="color: #ffffff;">Your Profile</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce Inc. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Instant AJAX Script -->
+    <script>
+    function addToCartAjax(productId) {
+        var qtySelect = document.getElementById("quantity");
+        var qty = qtySelect ? qtySelect.value : 1;
+        
+        fetch(`/user/add-to-cart-ajax/${productId}?quantity=${qty}`)
+            .then(response => {
+                if (response.status === 401) {
+                    alert("Please login first to add items to cart!");
+                    window.location.href = "/user-login";
+                    return null;
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    var countEl = document.getElementById("cart-count");
+                    if (countEl) countEl.innerText = data.cart_count;
+                    alert("✔ " + data.message);
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error("Cart Error:", error);
+            });
+    }
+    </script>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - SmartCart Admin</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ SmartCart Admin Control Center | Register New Inventory Listing</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/admin-dashboard" class="brand-emblem">
+                    <div class="brand-icon">AD</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Add Merchandise</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/admin-dashboard" class="nav-link">Dashboard</a></li>
+                        <li><a href="/admin/item-list" class="nav-link">Catalog</a></li>
+                        <li><a href="/admin-logout" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="max-width: 720px;">
+            <div style="margin-bottom: 1.5rem;">
+                <h1 style="margin-bottom: 0.25rem;">Add New Product (Day 4)</h1>
+                <p style="margin-bottom: 0;">Register new product into the SmartCart catalog with high-res image and retail pricing.</p>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Form Card -->
+            <div class="vintage-card vintage-card-accent" style="padding: 2rem;">
+                <form method="POST" action="/admin/add-item" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Product Name:</label>
+                        <input type="text" id="name" name="name" placeholder="e.g. Wireless Noise Cancelling Headphones" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description & Specifications:</label>
+                        <textarea id="description" name="description" rows="4" cols="40" placeholder="Provide detailed merchandise description, specifications, and key features..." required></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label for="category" class="form-label">Category:</label>
+                            <input type="text" id="category" name="category" placeholder="e.g. Electronics, Lifestyle, Audio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="price" class="form-label">Price (INR):</label>
+                            <input type="number" step="0.01" id="price" name="price" placeholder="e.g. 2499.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image" class="form-label">Product Image File:</label>
+                        <input type="file" id="image" name="image" accept="image/*" required>
+                        <small style="display: block; color: var(--ink-muted); margin-top: 0.25rem;">Supported formats: PNG, JPG, JPEG, WEBP, GIF</small>
+                    </div>
+
+                    <hr style="margin: 1.5rem 0;">
+
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+                            Upload & Save Product →
+                        </button>
+                        <a href="/admin/item-list" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Admin Suite</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #94A3B8;">Inventory Control Console.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/admin-dashboard">Dashboard</a>
+                    <a href="/admin/item-list">Catalog</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - SmartCart Store</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ <strong>Great Indian Festival Sale</strong> is Live! Up to 60% OFF on Top Tech & Fashion | Free Express Delivery</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="brand-emblem">
+                    <div class="brand-icon">SC</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Customer Portal</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/" class="nav-link">Home</a></li>
+                        <li><a href="/user/products" class="nav-link">Catalog</a></li>
+                        <li><a href="/user/my-orders" class="nav-link">My Orders</a></li>
+
+                        <!-- Amazon-Style User Account Dropdown -->
+                        <li class="user-account-menu">
+                            <a href="/user/profile" class="user-profile-pill active">
+                                {% if session.get('user_profile_image') %}
+                                    <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img">
+                                {% else %}
+                                    <span class="user-avatar-monogram">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                {% endif %}
+                                <div class="user-nav-text">
+                                    <span class="nav-line-1">Hello, {{ session.get('user_name', 'Account').split()[0] }}</span>
+                                    <span class="nav-line-2">Account & Lists ▾</span>
+                                </div>
+                            </a>
+                            <div class="user-dropdown-card">
+                                <div class="user-dropdown-header">
+                                    <div class="dropdown-avatar-wrap">
+                                        {% if session.get('user_profile_image') %}
+                                            <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img lg">
+                                        {% else %}
+                                            <span class="user-avatar-monogram lg">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <strong>{{ session.get('user_name') }}</strong>
+                                        <div style="font-size: 0.8rem; color: var(--ink-muted); word-break: break-all;">{{ session.get('user_email') }}</div>
+                                    </div>
+                                </div>
+                                <hr class="dropdown-divider">
+                                <a href="/user/profile" class="dropdown-item">👤 Edit Profile & Photo</a>
+                                <a href="/user/my-orders" class="dropdown-item">📦 Your Orders & Invoices</a>
+                                <a href="/user-dashboard" class="dropdown-item active">📊 Customer Dashboard</a>
+                                <a href="/user/cart" class="dropdown-item">🛒 Shopping Cart</a>
+                                <hr class="dropdown-divider">
+                                <a href="/user-logout" class="dropdown-item logout">🚪 Sign Out</a>
+                            </div>
+                        </li>
+
+                        <li>
+                            <a href="/user/cart" class="nav-cart-btn">
+                                <span>🛒 Cart</span>
+                                <span id="cart-count" class="cart-counter-pill">{{ session.get('cart')|length if session.get('cart') else 0 }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <div class="amazon-breadcrumb">
+                <a href="/">Home</a> <span>›</span> 
+                <span>Your Account Dashboard</span>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Amazon Account Greeting Hero -->
+            <div class="vintage-card vintage-card-accent" style="margin-bottom: 2rem; background: linear-gradient(135deg, #ffffff 0%, #fef8f2 100%);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1.25rem;">
+                        <div style="position: relative;">
+                            {% if session.get('user_profile_image') %}
+                                <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--amazon-orange);">
+                            {% else %}
+                                <div class="user-avatar-monogram" style="width: 72px; height: 72px; font-size: 2rem;">
+                                    {{ session.get('user_name', 'U')[0]|upper }}
+                                </div>
+                            {% endif %}
+                            <span class="badge-prime-deal" style="bottom: -5px; top: auto; right: -5px;">⚡ PRIME</span>
+                        </div>
+                        <div>
+                            <span class="badge badge-gold" style="margin-bottom: 0.35rem;">Prime Customer</span>
+                            <h1 style="margin-bottom: 0.2rem; font-size: 1.7rem; color: var(--ink-primary);">
+                                Welcome, {{ session.get('user_name') }}!
+                            </h1>
+                            <p style="margin-bottom: 0; font-size: 0.92rem; color: var(--ink-secondary);">
+                                Registered Email: <strong>{{ session.get('user_email') }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <a href="/user/profile" class="btn btn-primary">👤 Manage Profile & Photo</a>
+                        <a href="/user-logout" class="btn btn-secondary">Sign Out</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Amazon Portal Grid -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.25rem; color: var(--ink-primary);">Your Account Shortcuts</h2>
+            <div class="action-grid" style="margin-bottom: 2.75rem;">
+                <!-- Profile Settings -->
+                <a href="/user/profile" class="action-card">
+                    <div class="action-card-title">
+                        <span>👤</span> Your Profile & Avatar
+                    </div>
+                    <p class="action-card-desc">
+                        Upload or change your profile image, update your full name, email address, and security password.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Edit Profile →</span>
+                </a>
+
+                <!-- Orders & Invoices -->
+                <a href="/user/my-orders" class="action-card">
+                    <div class="action-card-title">
+                        <span>📦</span> Your Orders & Invoices
+                    </div>
+                    <p class="action-card-desc">
+                        Track placed packages, review item purchase history, and download automated PDF tax invoices.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">View Order History →</span>
+                </a>
+
+                <!-- Shopping Bag -->
+                <a href="/user/cart" class="action-card">
+                    <div class="action-card-title">
+                        <span>🛒</span> Shopping Bag (<span id="cart-count-card">{{ session.get('cart')|length if session.get('cart') else 0 }}</span> items)
+                    </div>
+                    <p class="action-card-desc">
+                        Review products currently in your cart, modify unit quantities, and proceed to instant checkout.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">View Cart & Checkout →</span>
+                </a>
+
+                <!-- Explore Storefront -->
+                <a href="/user/products" class="action-card">
+                    <div class="action-card-title">
+                        <span>🛍️</span> Explore Festive Deals
+                    </div>
+                    <p class="action-card-desc">
+                        Browse the complete catalog, filter by categories, and take advantage of limited-time discounts.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Browse Catalog →</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Store</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #d5d9d9;">Online Shopping with Fast Delivery & Razorpay / UPI Security.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/user/products" style="color: #ffffff;">Store Catalog</a>
+                    <a href="/user/cart" style="color: #ffffff;">Shopping Cart</a>
+                    <a href="/user/profile" style="color: #ffffff;">Your Profile</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce Inc. All rights reserved.</small>
+            </div>
+        </div>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - SmartCart</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>🎉 Thank you for your order! Your items will be dispatched shortly.</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="brand-emblem">
+                    <div class="brand-icon">SC</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Order Confirmation</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/user/products" class="nav-link">Store Catalog</a></li>
+                        <li><a href="/user/my-orders" class="nav-link">My Orders</a></li>
+                        <li><a href="/user-dashboard" class="nav-link">Dashboard</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="max-width: 900px;">
+            <!-- Confirmation Banner Card -->
+            <div class="vintage-card vintage-card-accent" style="text-align: center; padding: 3rem 2rem; margin-bottom: 2rem; background: linear-gradient(135deg, #FFFFFF 0%, #ECFDF5 100%);">
+                <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">🎉</div>
+                <h1 style="font-size: 2.4rem; margin-bottom: 0.5rem; color: var(--ink-primary);">Order Confirmed!</h1>
+                <p style="font-size: 1.1rem; color: var(--ink-secondary); max-width: 600px; margin: 0 auto 1.5rem;">
+                    Thank you for shopping with <strong>SmartCart</strong>. Your order has been placed and confirmed successfully.
+                </p>
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--status-success-bg); color: var(--status-success); padding: 0.45rem 1.25rem; border-radius: var(--radius-full); font-weight: 700; border: 1px solid var(--status-success-border);">
+                    <span>✔</span> Payment Verified & Order Saved
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Order Details Card -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1rem;">Order Information</h2>
+            <div class="table-responsive">
+                <table class="vintage-table" border="1" cellpadding="8" cellspacing="0">
+                    <tr>
+                        <th width="35%">Order ID:</th>
+                        <td><strong>#{{ order.order_id }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Payment Reference:</th>
+                        <td><code>{{ order.razorpay_order_id }}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Transaction ID:</th>
+                        <td><code>{{ order.razorpay_payment_id }}</code></td>
+                    </tr>
+                    <tr>
+                        <th>Total Amount Paid:</th>
+                        <td><strong style="font-family: var(--font-brand); font-size: 1.35rem; color: var(--accent-primary);">₹{{ order.amount }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Payment Status:</th>
+                        <td><span class="badge badge-paid"><strong>{{ order.payment_status }}</strong></span></td>
+                    </tr>
+                    <tr>
+                        <th>Order Date & Time:</th>
+                        <td>{{ order.created_at }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Ordered Items Table -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1rem; margin-top: 2rem;">Ordered Items</h2>
+            <div class="table-responsive">
+                <table class="vintage-table" border="1" cellpadding="8" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for it in items %}
+                        <tr>
+                            <td><strong>{{ it.product_name }}</strong></td>
+                            <td>{{ it.quantity }}</td>
+                            <td>₹{{ it.price }}</td>
+                            <td><strong style="color: var(--ink-primary);">₹{{ it.price * it.quantity }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Download Invoice Action Card -->
+            <div class="vintage-card" style="background: #F8FAFC; text-align: center; padding: 2rem; margin-top: 2.5rem; border: 1px solid var(--border-color);">
+                <h3 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Download Official Invoice</h3>
+                <p style="font-size: 0.92rem; color: var(--ink-secondary); margin-bottom: 1.5rem;">
+                    Get an instant, itemized tax invoice formatted in A4 PDF for your records.
+                </p>
+                <a href="/user/download-invoice/{{ order.order_id }}" style="text-decoration: none !important;">
+                    <button type="button" class="btn btn-primary btn-lg">
+                        <span>📄</span> <strong>Download Invoice (PDF)</strong>
+                    </button>
+                </a>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap;">
+                <a href="/user/products" class="btn btn-secondary">Continue Shopping</a>
+                <a href="/user/my-orders" class="btn btn-secondary">View Order History</a>
+                <a href="/user-dashboard" class="btn btn-secondary">My Dashboard</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Store</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #94A3B8;">Modern eCommerce platform with seamless checkout and instant invoicing.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/user/products">Catalog</a>
+                    <a href="/user/my-orders">My Orders</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

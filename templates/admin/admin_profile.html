@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Profile - SmartCart</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ SmartCart Admin Control Center | Identity & Security Settings</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/admin-dashboard" class="brand-emblem">
+                    <div class="brand-icon">AD</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Admin Settings</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/admin-dashboard" class="nav-link">Dashboard</a></li>
+                        <li><a href="/admin/item-list" class="nav-link">Catalog</a></li>
+                        <li><a href="/admin-logout" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container" style="max-width: 720px;">
+            <div style="margin-bottom: 1.5rem;">
+                <h1 style="margin-bottom: 0.25rem;">Admin Profile & Settings (Day 8)</h1>
+                <p style="margin-bottom: 0;">Manage your administrator profile details, avatar, and password.</p>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <div class="vintage-card vintage-card-accent" style="padding: 2rem;">
+                <!-- Current Profile Photo -->
+                <div style="text-align: center; margin-bottom: 2rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border-color);">
+                    <h2 style="font-size: 1.15rem; margin-bottom: 1rem;">Current Profile Avatar</h2>
+                    <div style="display: inline-block; position: relative;">
+                        {% if admin.profile_image %}
+                            <img src="/static/uploads/admin_profiles/{{ admin.profile_image }}" alt="Admin Profile Photo" width="120" height="120" style="object-fit: cover; border-radius: var(--radius-full); border: 3px solid var(--accent-primary); box-shadow: var(--shadow-card);"><br>
+                        {% else %}
+                            <div style="width: 120px; height: 120px; border-radius: var(--radius-full); background: var(--bg-surface-alt); border: 2px dashed var(--border-color-dark); display: flex; align-items: center; justify-content: center; margin: 0 auto; color: var(--ink-muted);">
+                                <span style="font-size: 2.8rem;">👤</span>
+                            </div>
+                            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--ink-muted);">No Profile Image Uploaded</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <h2 style="font-size: 1.25rem; margin-bottom: 1.25rem;">Edit Profile Details</h2>
+                <form method="POST" action="/admin/profile" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Admin Name:</label>
+                        <input type="text" id="name" name="name" value="{{ admin.name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Admin Email:</label>
+                        <input type="email" id="email" name="email" value="{{ admin.email }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Change Password (leave empty to keep current):</label>
+                        <input type="password" id="password" name="password" placeholder="Enter new password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="profile_image" class="form-label">Upload New Profile Avatar (optional):</label>
+                        <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                    </div>
+
+                    <hr style="margin: 1.75rem 0;">
+
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button type="submit" class="btn btn-primary btn-lg" style="flex: 1;">
+                            Update Profile
+                        </button>
+                        <a href="/admin-dashboard" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Admin Suite</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #94A3B8;">Administrative Console.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/admin-dashboard">Dashboard</a>
+                    <a href="/admin/item-list">Manage Products</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products - SmartCart Admin</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ SmartCart Admin Control Center | Real-time Inventory & Product Management</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/admin-dashboard" class="brand-emblem">
+                    <div class="brand-icon">AD</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Admin Inventory</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/admin-dashboard" class="nav-link">Dashboard</a></li>
+                        <li><a href="/admin/add-item" class="nav-link">+ Add Product</a></li>
+                        <li><a href="/admin/profile" class="nav-link">Profile</a></li>
+                        <li><a href="/admin-logout" class="nav-link">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="margin-bottom: 0.25rem;">Product Catalog Management (Day 5 & 7)</h1>
+                    <p style="margin-bottom: 0;">Comprehensive inventory management table with real-time stock inspection.</p>
+                </div>
+                <div>
+                    <a href="/admin/add-item" class="btn btn-primary">+ Add New Product</a>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Modern Search & Filter Form (Day 7) -->
+            <div class="filter-bar">
+                <h2 style="font-size: 1.15rem; margin-bottom: 0.75rem; width: 100%;">Search & Filter Products</h2>
+                <form method="GET" action="/admin/item-list" class="filter-form">
+                    <div class="filter-input-wrap">
+                        <label for="search" class="form-label">Search by Name/Description:</label>
+                        <input type="text" id="search" name="search" value="{{ search_query or '' }}" placeholder="Search products...">
+                    </div>
+                    
+                    <div class="filter-select-wrap">
+                        <label for="category" class="form-label">Filter by Category:</label>
+                        <select id="category" name="category">
+                            <option value="">-- All Categories --</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 0.5rem; align-items: flex-end; padding-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="/admin/item-list" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 style="font-size: 1.35rem; margin-bottom: 0;">Product Records ({{ products|length }})</h2>
+            </div>
+
+            {% if products|length == 0 %}
+                <div class="vintage-card" style="text-align: center; padding: 4rem 1.5rem;">
+                    <div style="font-size: 3rem; color: var(--ink-muted); margin-bottom: 0.75rem;">📦</div>
+                    <p style="font-size: 1.1rem; color: var(--ink-secondary);">No products found matching the criteria.</p>
+                    <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 1rem;">
+                        <a href="/admin/item-list" class="btn btn-secondary">Reset Filter</a>
+                        <a href="/admin/add-item" class="btn btn-primary">+ Add New Product</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="vintage-table" border="1" cellpadding="8" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Category</th>
+                                <th>Price (INR)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in products %}
+                            <tr>
+                                <td><strong>#{{ p.product_id }}</strong></td>
+                                <td>
+                                    {% if p.image %}
+                                        <img src="/static/uploads/products/{{ p.image }}" alt="{{ p.name }}" width="50" height="50" style="object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
+                                    {% else %}
+                                        <span style="font-size: 0.8rem; color: var(--ink-muted);">No Image</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="/admin/view-item/{{ p.product_id }}">
+                                        <strong>{{ p.name }}</strong>
+                                    </a>
+                                </td>
+                                <td><span class="badge badge-navy">{{ p.category }}</span></td>
+                                <td><strong style="color: var(--accent-primary); font-size: 1.05rem;">₹{{ p.price }}</strong></td>
+                                <td>
+                                    <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                        <a href="/admin/view-item/{{ p.product_id }}" class="btn btn-secondary btn-sm">View Details</a>
+                                        <a href="/admin/update-item/{{ p.product_id }}" class="btn btn-secondary btn-sm">Edit</a>
+                                        <a href="/admin/delete-item/{{ p.product_id }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Admin Suite</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #94A3B8;">Inventory Control Suite.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/admin-dashboard">Dashboard</a>
+                    <a href="/admin/add-item">Add Product</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>

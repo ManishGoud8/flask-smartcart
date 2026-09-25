@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCart - Modern Online Store & eCommerce Deals</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ <strong>Great Indian Festival Sale</strong> is Live! Up to 60% OFF on Top Tech & Fashion | Free Express Delivery</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="brand-emblem">
+                    <div class="brand-icon">SC</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Online Shopping</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/user/products" class="nav-link">Explore Store</a></li>
+
+                        {% if session.get('user_id') %}
+                            <!-- Amazon-Style User Account Dropdown -->
+                            <li class="user-account-menu">
+                                <a href="/user/profile" class="user-profile-pill">
+                                    {% if session.get('user_profile_image') %}
+                                        <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img">
+                                    {% else %}
+                                        <span class="user-avatar-monogram">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                    {% endif %}
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, {{ session.get('user_name', 'Account').split()[0] }}</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                                <div class="user-dropdown-card">
+                                    <div class="user-dropdown-header">
+                                        <div class="dropdown-avatar-wrap">
+                                            {% if session.get('user_profile_image') %}
+                                                <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img lg">
+                                            {% else %}
+                                                <span class="user-avatar-monogram lg">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ session.get('user_name') }}</strong>
+                                            <div style="font-size: 0.8rem; color: var(--ink-muted); word-break: break-all;">{{ session.get('user_email') }}</div>
+                                        </div>
+                                    </div>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user/profile" class="dropdown-item">👤 Edit Profile & Photo</a>
+                                    <a href="/user/my-orders" class="dropdown-item">📦 Your Orders & Invoices</a>
+                                    <a href="/user-dashboard" class="dropdown-item">📊 Customer Dashboard</a>
+                                    <a href="/user/cart" class="dropdown-item">🛒 Shopping Cart</a>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user-logout" class="dropdown-item logout">🚪 Sign Out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <!-- Logged Out Account Pill -->
+                            <li class="user-account-menu">
+                                <a href="/user-login" class="user-profile-pill">
+                                    <div class="user-avatar-monogram">👤</div>
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, Sign In</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                                <div class="user-dropdown-card">
+                                    <a href="/user-login" class="btn btn-primary btn-block" style="margin-bottom: 0.5rem;">Sign In</a>
+                                    <div style="text-align: center; font-size: 0.82rem; color: var(--ink-secondary);">
+                                        New customer? <a href="/user-register" style="color: var(--amazon-prime-blue); font-weight: 700;">Start here</a>
+                                    </div>
+                                    <hr class="dropdown-divider">
+                                    <a href="/admin-login" class="dropdown-item">⚡ Administrator Login</a>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                        <li>
+                            <a href="/user/cart" class="nav-cart-btn">
+                                <span>🛒 Cart</span>
+                                <span id="cart-count" class="cart-counter-pill">{{ session.get('cart')|length if session.get('cart') else 0 }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Promotional Deal Ticker Strip -->
+            <div class="deal-ticker-strip">
+                <div class="deal-ticker-content">
+                    <span class="deal-pill-tag">🔥 MEGA SALE</span>
+                    <strong style="color: var(--ink-primary); font-size: 0.95rem;">Instant 10% Bank Discount on HDFC & ICICI Cards</strong>
+                    <span style="color: var(--ink-secondary); font-size: 0.88rem;">| Minimum purchase ₹1,500</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.82rem; color: var(--ink-muted);">Coupon:</span>
+                    <span class="coupon-code-badge">SMART200</span>
+                </div>
+            </div>
+
+            <!-- Amazon-Inspired Interactive Promotional Hero Carousel -->
+            <div class="amazon-hero-carousel">
+                <!-- Slide 1 -->
+                <div class="hero-slide hero-slide-1 active" id="slide-1">
+                    <span class="hero-badge-deal">⚡ GREAT FESTIVAL SALE</span>
+                    <h1 class="hero-title">Welcome to SmartCart - Great Festive Deals</h1>
+                    <p class="hero-subtitle">
+                        Discover top deals on 4K OLED Laptops, Pro Studio Headphones, Mechanical Keyboards, and Road Bicycles with Instant Discounts.
+                    </p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/user/products" class="btn btn-primary btn-lg">Shop All Deals →</a>
+                        <a href="/user/cart" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.15); color: #ffffff !important; border-color: rgba(255,255,255,0.4);">View Cart</a>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="hero-slide hero-slide-2" id="slide-2">
+                    <span class="hero-badge-deal" style="background: #b12704;">🏷️ ELECTRONICS & ACCESSORIES</span>
+                    <h1 class="hero-title">Up to 50% Off Top Gadgets</h1>
+                    <p class="hero-subtitle">
+                        Precision Optical Gaming Mice, Tactile Mechanical Keyboards, and Smart Noise-Cancelling Audio at unbeatable festive prices.
+                    </p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/user/products?category=Electronics" class="btn btn-accent btn-lg">Explore Electronics →</a>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="hero-slide hero-slide-3" id="slide-3">
+                    <span class="hero-badge-deal" style="background: #007600;">⚡ PRIME SAME DAY DISPATCH</span>
+                    <h1 class="hero-title">Everyday Essentials & Fashion</h1>
+                    <p class="hero-subtitle">
+                        Breathable Tailored Slim Cotton Shirts, Insulated Flasks, Sunscreen Care, and Stationery Journals delivered to your doorstep.
+                    </p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/user/products" class="btn btn-primary btn-lg">Shop Essentials →</a>
+                    </div>
+                </div>
+
+                <!-- Carousel Controls -->
+                <div class="hero-controls">
+                    <button class="hero-dot active" onclick="switchSlide(0)"></button>
+                    <button class="hero-dot" onclick="switchSlide(1)"></button>
+                    <button class="hero-dot" onclick="switchSlide(2)"></button>
+                </div>
+            </div>
+
+            <!-- Quick Navigation & Portals Grid -->
+            <h2 style="font-size: 1.35rem; margin-bottom: 1.25rem;">Explore Portals & Services</h2>
+            <div class="action-grid" style="margin-bottom: 2.75rem;">
+                <!-- Customer Store Card -->
+                <a href="/user/products" class="action-card">
+                    <div class="action-card-title">
+                        <span>🛍️</span> Customer Storefront
+                    </div>
+                    <p class="action-card-desc">
+                        Browse the curated inventory, filter by category, inspect specifications, and instant-add items to your shopping cart.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Enter Storefront →</span>
+                </a>
+
+                <!-- Customer Account Card -->
+                <a href="/user-login" class="action-card">
+                    <div class="action-card-title">
+                        <span>👤</span> User Account & Profile
+                    </div>
+                    <p class="action-card-desc">
+                        Sign in to your customer account, upload your custom profile photo, access your orders dashboard, and track history.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Customer Sign In →</span>
+                </a>
+
+                <!-- Admin Suite Card -->
+                <a href="/admin-login" class="action-card">
+                    <div class="action-card-title">
+                        <span>⚡</span> Admin Command Center
+                    </div>
+                    <p class="action-card-desc">
+                        Administrative command center to manage products, update pricing, upload catalog images, and monitor orders.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Admin Portal →</span>
+                </a>
+
+                <!-- Admin Signup Card -->
+                <a href="/admin-signup" class="action-card">
+                    <div class="action-card-title">
+                        <span>🔐</span> Admin Signup (OTP)
+                    </div>
+                    <p class="action-card-desc">
+                        Register as an authorized store administrator via secure email OTP verification workflow.
+                    </p>
+                    <span style="margin-top: auto; font-size: 0.88rem; font-weight: 700; color: var(--amazon-prime-blue);">Register Admin →</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.25rem; color: #FFFFFF;">SmartCart</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #d5d9d9;">Online Shopping with Fast Delivery & Razorpay / UPI Security.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/user/products" style="color: #ffffff;">Store Catalog</a>
+                    <a href="/user/profile" style="color: #ffffff;">Your Profile</a>
+                    <a href="/user/my-orders" style="color: #ffffff;">Your Orders</a>
+                    <a href="/admin-login" style="color: #ffffff;">Admin Login</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce Inc. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Navigation JS -->
+    <script src="/static/js/nav.js"></script>
+
+    <!-- Banner Carousel Script -->
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-dot');
+
+        function switchSlide(index) {
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === index);
+            });
+            dots.forEach((d, i) => {
+                d.classList.toggle('active', i === index);
+            });
+            currentSlide = index;
+        }
+
+        // Auto rotate every 5 seconds
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            switchSlide(currentSlide);
+        }, 5000);
+    </script>
+</body>
+</html>

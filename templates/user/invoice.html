@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SmartCart Invoice - Order #{{ order.order_id }}</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 18mm;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            color: #1B2A38;
+            background-color: #FFFFFF;
+            font-size: 10.5pt;
+            line-height: 1.45;
+        }
+        .header-box {
+            border-bottom: 3px solid #2C4152;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .store-title {
+            font-size: 22pt;
+            font-weight: bold;
+            color: #2C4152;
+            letter-spacing: -0.5px;
+            margin: 0;
+            padding: 0;
+            text-transform: uppercase;
+        }
+        .store-subtitle {
+            font-size: 9pt;
+            color: #D19E49;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+        .invoice-title {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #1B2A38;
+            margin-top: 10px;
+        }
+        .details-table {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .details-table td {
+            vertical-align: top;
+            padding: 6px;
+            font-size: 10pt;
+            color: #4A5D6E;
+        }
+        .ledger-table {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .ledger-table th {
+            background-color: #1B2A38;
+            color: #FFFFFF;
+            font-weight: bold;
+            border: 1px solid #1B2A38;
+            padding: 8px 10px;
+            font-size: 10pt;
+            text-align: left;
+        }
+        .ledger-table td {
+            border: 1px solid #E1E8ED;
+            padding: 8px 10px;
+            font-size: 10pt;
+            color: #1B2A38;
+        }
+        .grand-total-row td {
+            background-color: #FDF8ED;
+            font-weight: bold;
+            font-size: 11pt;
+            border-top: 2px solid #D19E49;
+            color: #1B2A38;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 8.5pt;
+            color: #62727E;
+            border-top: 1px solid #E1E8ED;
+            padding-top: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-box">
+        <div class="store-subtitle">OFFICIAL TAX INVOICE & RECEIPT</div>
+        <h1 class="store-title">SmartCart</h1>
+        <div class="invoice-title">Tax Invoice</div>
+        <p style="margin-top: 6px; font-size: 10pt; color: #64748B;">
+            <strong>Order ID:</strong> #{{ order.order_id }} | <strong>Order Date:</strong> {{ order.created_at }}
+        </p>
+    </div>
+
+    <h3 style="font-size: 11pt; color: #0F172A; margin-bottom: 6px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px;">
+        Customer & Transaction Details
+    </h3>
+    <table class="details-table" width="100%" border="0" cellpadding="4">
+        <tr>
+            <td width="50%">
+                <strong>Customer ID:</strong> {{ order.user_id }}<br>
+                <strong>Payment Status:</strong> {{ order.payment_status }}<br>
+                <strong>Merchant:</strong> SmartCart Online Store
+            </td>
+            <td width="50%">
+                <strong>Order Reference:</strong> {{ order.razorpay_order_id }}<br>
+                <strong>Payment ID:</strong> {{ order.razorpay_payment_id }}<br>
+                <strong>Currency:</strong> INR
+            </td>
+        </tr>
+    </table>
+
+    <h3 style="font-size: 11pt; color: #0F172A; margin-bottom: 6px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px;">
+        Items Summary
+    </h3>
+    <table class="ledger-table" width="100%" border="1" cellpadding="6" cellspacing="0">
+        <thead>
+            <tr>
+                <th align="left">Product Description</th>
+                <th align="center" width="15%">Qty</th>
+                <th align="right" width="22%">Unit Price</th>
+                <th align="right" width="22%">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for it in items %}
+            <tr>
+                <td><strong>{{ it.product_name }}</strong></td>
+                <td align="center">{{ it.quantity }}</td>
+                <td align="right">Rs. {{ it.price }}</td>
+                <td align="right">Rs. {{ it.price * it.quantity }}</td>
+            </tr>
+            {% endfor %}
+            <tr class="grand-total-row">
+                <td colspan="3" align="right"><strong>Grand Total Amount:</strong></td>
+                <td align="right"><strong>Rs. {{ order.amount }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer-note">
+        <p><em>Thank you for your purchase with SmartCart! This is a computer generated invoice.</em></p>
+        <p>SmartCart eCommerce Platform • www.smartcart.com</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders & Invoices - SmartCart Store</title>
+    <link rel="stylesheet" href="/static/css/vintage.css">
+</head>
+<body>
+    <!-- Topbar Banner -->
+    <div class="header-topbar">
+        <span>⚡ <strong>Great Indian Festival Sale</strong> is Live! Up to 60% OFF on Top Tech & Fashion | Free Express Delivery</span>
+    </div>
+
+    <!-- Navigation Header -->
+    <header class="vintage-header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="/" class="brand-emblem">
+                    <div class="brand-icon">SC</div>
+                    <div class="brand-text">
+                        <span class="brand-title">SmartCart</span>
+                        <span class="brand-tagline">Order History</span>
+                    </div>
+                </a>
+                <nav>
+                    <ul class="vintage-nav">
+                        <li><a href="/user/products" class="nav-link">Catalog</a></li>
+                        <li><a href="/user/my-orders" class="nav-link active">My Orders</a></li>
+
+                        {% if session.get('user_id') %}
+                            <!-- Amazon-Style User Account Dropdown -->
+                            <li class="user-account-menu">
+                                <a href="/user/profile" class="user-profile-pill">
+                                    {% if session.get('user_profile_image') %}
+                                        <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img">
+                                    {% else %}
+                                        <span class="user-avatar-monogram">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                    {% endif %}
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, {{ session.get('user_name', 'Account').split()[0] }}</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                                <div class="user-dropdown-card">
+                                    <div class="user-dropdown-header">
+                                        <div class="dropdown-avatar-wrap">
+                                            {% if session.get('user_profile_image') %}
+                                                <img src="/static/uploads/user_profiles/{{ session.get('user_profile_image') }}" alt="Profile" class="user-avatar-img lg">
+                                            {% else %}
+                                                <span class="user-avatar-monogram lg">{{ session.get('user_name', 'U')[0]|upper }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <strong>{{ session.get('user_name') }}</strong>
+                                            <div style="font-size: 0.8rem; color: var(--ink-muted); word-break: break-all;">{{ session.get('user_email') }}</div>
+                                        </div>
+                                    </div>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user/profile" class="dropdown-item">👤 Edit Profile & Photo</a>
+                                    <a href="/user/my-orders" class="dropdown-item active">📦 Your Orders & Invoices</a>
+                                    <a href="/user-dashboard" class="dropdown-item">📊 Customer Dashboard</a>
+                                    <a href="/user/cart" class="dropdown-item">🛒 Shopping Cart</a>
+                                    <hr class="dropdown-divider">
+                                    <a href="/user-logout" class="dropdown-item logout">🚪 Sign Out</a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <li class="user-account-menu">
+                                <a href="/user-login" class="user-profile-pill">
+                                    <div class="user-avatar-monogram">👤</div>
+                                    <div class="user-nav-text">
+                                        <span class="nav-line-1">Hello, Sign In</span>
+                                        <span class="nav-line-2">Account & Lists ▾</span>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        <li>
+                            <a href="/user/cart" class="nav-cart-btn">
+                                <span>🛒 Cart</span>
+                                <span id="cart-count" class="cart-counter-pill">{{ session.get('cart')|length if session.get('cart') else 0 }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumbs -->
+            <div class="amazon-breadcrumb">
+                <a href="/">Home</a> <span>›</span> 
+                <a href="/user-dashboard">Your Account</a> <span>›</span> 
+                <span>Your Orders</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h1 style="margin-bottom: 0.25rem;">Your Orders & Invoices</h1>
+                    <p style="margin-bottom: 0; color: var(--ink-secondary);">Track packages, view payment confirmations, and download GST tax invoices.</p>
+                </div>
+                <div>
+                    <a href="/user/products" class="btn btn-primary btn-sm">🛍️ Browse Store Catalog</a>
+                </div>
+            </div>
+
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="alert-list">
+                {% for category, message in messages %}
+                  <li class="alert alert-{{ category }}">
+                      <span>ℹ️</span> <strong>[{{ category }}]</strong> {{ message }}
+                  </li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+
+            {% if not orders or orders|length == 0 %}
+                <div class="vintage-card" style="text-align: center; padding: 4rem 1.5rem;">
+                    <div style="font-size: 3.5rem; color: var(--ink-muted); margin-bottom: 1rem;">📦</div>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">No orders placed yet</h2>
+                    <p style="max-width: 500px; margin: 0 auto 1.75rem; color: var(--ink-secondary);">
+                        Your order history is empty. Once you make a purchase, all your invoices and delivery tracking details will appear here.
+                    </p>
+                    <a href="/user/products" class="btn btn-primary btn-lg">Start Shopping Now →</a>
+                </div>
+            {% else %}
+                <div class="table-responsive">
+                    <table class="vintage-table" border="1" cellpadding="8" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Date Placed</th>
+                                <th>Total Amount</th>
+                                <th>Payment Status</th>
+                                <th>Transaction Ref</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>
+                                    <a href="/user/order-success/{{ order.order_id }}" style="color: var(--amazon-prime-blue); font-weight: 700;">
+                                        #{{ order.order_id }}
+                                    </a>
+                                </td>
+                                <td>{{ order.created_at }}</td>
+                                <td><strong style="color: var(--ink-primary); font-size: 1.05rem;">₹{{ "%.2f"|format(order.amount) }}</strong></td>
+                                <td>
+                                    {% if order.payment_status|lower == 'paid' or order.payment_status|lower == 'success' or order.payment_status|lower == 'completed' %}
+                                        <span class="badge badge-success">✓ {{ order.payment_status }}</span>
+                                    {% else %}
+                                        <span class="badge badge-gold">{{ order.payment_status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <code style="font-size: 0.84rem; background: var(--bg-surface-alt); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color);">
+                                        {{ order.razorpay_payment_id or 'UPI-QR-DIRECT' }}
+                                    </code>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.5rem;">
+                                        <a href="/user/order-success/{{ order.order_id }}" class="btn btn-secondary btn-sm">Details</a>
+                                        <a href="/user/download-invoice/{{ order.order_id }}" class="btn btn-primary btn-sm">
+                                            <span>📄</span> PDF Invoice
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="vintage-footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <div>
+                    <strong style="font-family: var(--font-brand); font-size: 1.2rem; color: #FFFFFF;">SmartCart Store</strong>
+                    <p style="margin-top: 0.25rem; margin-bottom: 0; font-size: 0.85rem; color: #d5d9d9;">Online Shopping with Fast Delivery & Razorpay / UPI Security.</p>
+                </div>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="/user/products" style="color: #ffffff;">Store Catalog</a>
+                    <a href="/user/cart" style="color: #ffffff;">Shopping Cart</a>
+                    <a href="/user/profile" style="color: #ffffff;">Your Profile</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <small>© 2026 SmartCart eCommerce Inc. All rights reserved.</small>
+            </div>
+        </div>
+    </footer>
+    <script src="/static/js/nav.js"></script>
+</body>
+</html>
